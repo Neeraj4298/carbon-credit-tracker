@@ -19,7 +19,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const baseURL = process.env.REACT_APP_API_URL || 'https://your-render-backend-url.onrender.com/api';
+      const baseURL = process.env.REACT_APP_API_URL;
       console.log('Attempting registration with URL:', baseURL);
       console.log('Form data:', form);
       
