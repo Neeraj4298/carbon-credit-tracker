@@ -19,7 +19,7 @@ app.get('/api/health', (req, res) => {
   res.send('API is running...');
 });
 
-// API routes - using explicit require statements
+// API routes
 const authRoutes = require('./routes/authRoutes');
 const tripRoutes = require('./routes/tripRoutes');
 const employerRoutes = require('./routes/employerRoutes');
@@ -32,10 +32,12 @@ app.use('/api/admin', adminRoutes);
 
 // Serve static files from the React app
 if (process.env.NODE_ENV === 'production') {
+  // Serve static files
   app.use(express.static(path.join(__dirname, 'client/build')));
   
+  // Handle React routing, return all requests to React app
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
   });
 }
 
