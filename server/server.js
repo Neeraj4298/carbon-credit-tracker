@@ -10,7 +10,13 @@ const app = express();
 
 // Updated CORS configuration
 app.use(cors({
-  origin: ['https://carbon-credit-tracker.onrender.com', 'http://localhost:3000'],
+  origin: [
+    'https://carbon-credit-tracker.onrender.com', 
+    'http://localhost:3000',
+    'http://18.118.105.33:5000',
+    'http://3.145.8.153:5000',
+    'http://3.145.36.219:5000'  // Add new ECS IP
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
