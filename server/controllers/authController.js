@@ -6,17 +6,25 @@ exports.register = async (req, res) => {
   const { name, email, password, role, organization } = req.body;
   
   try {
-    // Log the received data (remove in production)
-    console.log('Registration attempt:', { name, email, role, organization });
+    // Log incoming request
+    console.log('Registration request received:', {
+      name,
+      email,
+      role,
+      organization,
+      passwordLength: password ? password.length : 0
+    });
 
     // Validate input
     if (!name || !email || !password) {
+      console.log('Missing required fields');
       return res.status(400).json({ msg: 'Please enter all required fields' });
     }
 
     // Check if user exists
     let user = await User.findOne({ email });
     if (user) {
+      console.log('User already exists:', email);
       return res.status(400).json({ msg: 'User already exists' });
     }
 
@@ -38,23 +46,44 @@ exports.register = async (req, res) => {
     }
 
     await user.save();
-    console.log('User registered successfully:', user._id);
+    console.log('User registered successfully:', {
+      userId: user._id,
+      email: user.email,
+      role: user.role
+    });
+    
     res.status(201).json({ msg: 'User registered successfully' });
     
   } catch (err) {
-    console.error('Registration error:', err);
-    res.status(500).json({ msg: 'Server error', error: err.message });
+    console.error('Registration error details:', {
+      message: err.message,
+      stack: err.stack,
+      code: err.code
+    });
+    res.status(500).json({ 
+      msg: 'Server error during registration', 
+      error: err.message,
+      details: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
   }
 };
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
   try {
+    console.log('Login attempt for email:', email);
+    
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
+    if (!user) {
+      console.log('User not found:', email);
+      return res.status(400).json({ msg: 'Invalid credentials' });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
+    if (!isMatch) {
+      console.log('Password mismatch for user:', email);
+      return res.status(400).json({ msg: 'Invalid credentials' });
+    }
 
     const payload = {
       user: {
@@ -66,10 +95,15 @@ exports.login = async (req, res) => {
 
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, 
       (err, token) => {
-        if (err) throw err;
+        if (err) {
+          console.error('JWT Sign error:', err);
+          throw err;
+        }
+        console.log('Login successful for:', email);
         res.json({ token });
       });
   } catch (err) {
+    console.error('Login error:', err);
     res.status(500).send('Server error');
   }
 };

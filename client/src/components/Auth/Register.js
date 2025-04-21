@@ -19,15 +19,25 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Update the URL to use the deployed backend URL
       const baseURL = process.env.REACT_APP_API_URL || 'https://your-render-backend-url.onrender.com/api';
+      console.log('Attempting registration with URL:', baseURL);
+      console.log('Form data:', form);
+      
       const response = await axios.post(`${baseURL}/auth/register`, form);
       console.log('Registration response:', response.data);
       alert('Registration successful! Please log in.');
       navigate('/');
     } catch (err) {
-      console.error('Registration error:', err.response?.data || err.message);
-      alert(err.response?.data?.msg || 'Registration failed. Please try again.');
+      console.error('Full error object:', err);
+      console.error('Error response:', err.response);
+      console.error('Error message:', err.message);
+      
+      const errorMessage = err.response?.data?.msg 
+        || err.response?.data?.error 
+        || err.message 
+        || 'Registration failed. Please try again.';
+      
+      alert(errorMessage);
     }
   };
 

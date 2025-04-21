@@ -10,30 +10,28 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', {
+      // Change this hardcoded URL to use environment variable
+      const baseURL = process.env.REACT_APP_API_URL || 'https://carbon-credit-tracker-backend.onrender.com/api';
+      const res = await axios.post(`${baseURL}/auth/login`, {
         email,
         password,
       });
-    //   localStorage.setItem('token', res.data.token);
-    //   navigate('/dashboard');
-    // } catch (err) {
-    //   alert('Invalid credentials');
-    // }
 
-    const token = res.data.token;
-    localStorage.setItem('token', token);
-    const decoded = JSON.parse(atob(token.split('.')[1]));
+      const token = res.data.token;
+      localStorage.setItem('token', token);
+      const decoded = JSON.parse(atob(token.split('.')[1]));
 
-    if (decoded.user.role === 'employer') {
-      navigate('/employer-dashboard');
-    } else if (decoded.user.role === 'admin') {
-      navigate('/admin-dashboard');
-    }else {
-      navigate('/dashboard');
+      if (decoded.user.role === 'employer') {
+        navigate('/employer-dashboard');
+      } else if (decoded.user.role === 'admin') {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      console.error('Login error:', err.response?.data || err.message);
+      alert('Invalid credentials');
     }
-  } catch (err) {
-    alert('Invalid credentials');
-  }
   };
 
   return (
