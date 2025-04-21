@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const path = require('path');
+const fs = require('fs');
 
 dotenv.config();
 const app = express();
@@ -32,12 +33,22 @@ app.use('/api/admin', adminRoutes);
 
 // Serve static files from the React app
 if (process.env.NODE_ENV === 'production') {
+  const clientBuildPath = path.join(__dirname, 'client/build');
+  console.log('Serving static files from:', clientBuildPath);
+  
   // Serve static files
-  app.use(express.static(path.join(__dirname, 'client/build')));
+  app.use(express.static(clientBuildPath));
   
   // Handle React routing, return all requests to React app
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+    const indexPath = path.join(clientBuildPath, 'index.html');
+    console.log('Attempting to serve:', indexPath);
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      console.error('index.html not found at:', indexPath);
+      res.status(404).send('Frontend build not found');
+    }
   });
 }
 
