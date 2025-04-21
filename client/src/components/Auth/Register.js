@@ -19,11 +19,15 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/auth/register', form);
+      // Update the URL to use the deployed backend URL
+      const baseURL = process.env.REACT_APP_API_URL || 'https://your-render-backend-url.onrender.com/api';
+      const response = await axios.post(`${baseURL}/auth/register`, form);
+      console.log('Registration response:', response.data);
       alert('Registration successful! Please log in.');
       navigate('/');
     } catch (err) {
-      alert('Registration failed');
+      console.error('Registration error:', err.response?.data || err.message);
+      alert(err.response?.data?.msg || 'Registration failed. Please try again.');
     }
   };
 
@@ -31,18 +35,45 @@ const Register = () => {
     <div className="container">
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
-        <input name="name" value={form.name} placeholder="Name" onChange={handleChange} required />
-        <input name="email" value={form.email} placeholder="Email" type="email" onChange={handleChange} required />
-        <input name="password" value={form.password} placeholder="Password" type="password" onChange={handleChange} required />
+        <input 
+          name="name" 
+          value={form.name} 
+          placeholder="Name" 
+          onChange={handleChange} 
+          required 
+        />
+        <input 
+          name="email" 
+          value={form.email} 
+          placeholder="Email" 
+          type="email" 
+          onChange={handleChange} 
+          required 
+        />
+        <input 
+          name="password" 
+          value={form.password} 
+          placeholder="Password" 
+          type="password" 
+          onChange={handleChange} 
+          required 
+        />
         <select name="role" value={form.role} onChange={handleChange}>
           <option value="employee">Employee</option>
           <option value="employer">Employer</option>
           <option value="admin">Admin</option>
         </select>
-        <input name="organization" value={form.organization} placeholder="Organization (if any)" onChange={handleChange} />
+        <input 
+          name="organization" 
+          value={form.organization} 
+          placeholder="Organization (if any)" 
+          onChange={handleChange} 
+        />
         <button type="submit">Register</button>
       </form>
-      <p onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>Already registered? Login</p>
+      <p onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+        Already registered? Login
+      </p>
     </div>
   );
 };
