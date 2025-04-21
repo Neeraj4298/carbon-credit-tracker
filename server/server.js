@@ -11,7 +11,7 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-url.onrender.com', 'http://localhost:3000']
+    ? ['https://carbon-credit-tracker-frontend.onrender.com', 'http://localhost:3000']
     : 'http://localhost:3000',
   credentials: true
 }));
@@ -25,16 +25,9 @@ app.get('/api/health', (req, res) => {
   res.send('API is running...');
 });
 
-// API routes
-const authRoutes = require('./routes/authRoutes');
-const tripRoutes = require('./routes/tripRoutes');
-const employerRoutes = require('./routes/employerRoutes');
-const adminRoutes = require('./routes/adminRoutes');
-
-app.use('/api/auth', authRoutes);
-app.use('/api/trips', tripRoutes);
-app.use('/api/employer', employerRoutes);
-app.use('/api/admin', adminRoutes);
+// API Routes (add your route imports here)
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/trips', require('./routes/tripRoutes'));
 
 // Serve static files from the React app
 if (process.env.NODE_ENV === 'production') {
@@ -57,6 +50,5 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
