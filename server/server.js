@@ -8,13 +8,18 @@ const fs = require('fs');
 dotenv.config();
 const app = express();
 
-// Middleware
+// Updated CORS configuration
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://carbon-credit-tracker-frontend.onrender.com', 'http://localhost:3000']
-    : 'http://localhost:3000',
-  credentials: true
+  origin: ['https://carbon-credit-tracker.onrender.com', 'http://localhost:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200
 }));
+
+// Enable pre-flight requests for all routes
+app.options('*', cors());
+
 app.use(express.json());
 
 // DB connection
@@ -25,7 +30,7 @@ app.get('/api/health', (req, res) => {
   res.send('API is running...');
 });
 
-// API Routes (add your route imports here)
+// API Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/trips', require('./routes/tripRoutes'));
 
@@ -34,10 +39,8 @@ if (process.env.NODE_ENV === 'production') {
   const clientBuildPath = path.join(__dirname, 'client/build');
   console.log('Serving static files from:', clientBuildPath);
   
-  // Serve static files
   app.use(express.static(clientBuildPath));
   
-  // Handle React routing, return all requests to React app
   app.get('*', (req, res) => {
     const indexPath = path.join(clientBuildPath, 'index.html');
     console.log('Attempting to serve:', indexPath);
