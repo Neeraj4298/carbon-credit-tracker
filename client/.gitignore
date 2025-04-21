@@ -13,8 +13,10 @@ node_modules/
 .env.production.local
 
 # Build files
-/client/build
-/client/dist
+/build
+build/
+dist/
+/dist
 
 # Logs
 npm-debug.log*
