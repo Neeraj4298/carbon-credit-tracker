@@ -20,7 +20,7 @@ const Register = () => {
     e.preventDefault();
     try {
       const baseURL = process.env.REACT_APP_API_URL;
-      console.log('Attempting registration with URL:', baseURL);
+      console.log('Attempting registration with URL:', `${baseURL}/auth/register`);
       console.log('Form data:', form);
       
       const response = await axios.post(`${baseURL}/auth/register`, form);
@@ -28,9 +28,16 @@ const Register = () => {
       alert('Registration successful! Please log in.');
       navigate('/');
     } catch (err) {
-      console.error('Full error object:', err);
-      console.error('Error response:', err.response);
-      console.error('Error message:', err.message);
+      console.error('Registration error:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        config: {
+          url: err.config?.url,
+          method: err.config?.method,
+          baseURL: err.config?.baseURL
+        }
+      });
       
       const errorMessage = err.response?.data?.msg 
         || err.response?.data?.error 

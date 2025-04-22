@@ -4,8 +4,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "cd ../client && npm install && npm run build && mkdir -p ../server/client && cp -r build ../server/client/",
-    "render-build": "npm install && npm run build"
+    "build": "echo 'No build step required for server'",
+    "render-build": "npm install"
   },
   "dependencies": {
     "axios": "^1.8.4",

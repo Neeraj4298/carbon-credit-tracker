@@ -1,0 +1,15 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateRole",
+                "iam:AttachRolePolicy",
+                "iam:PutRolePolicy",
+                "iam:PassRole"
+            ],
+            "Resource": "arn:aws:iam::043309362340:role/ecsTaskExecutionRole"
+        }
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "family": "carbon-credit-task",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "arn:aws:iam::043309362340:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+        {
+            "name": "carbon-credit-tracker",
+            "image": "043309362340.dkr.ecr.us-east-2.amazonaws.com/carbon-credit-tracker:latest",
+            "portMappings": [
+                {
+                    "containerPort": 5000,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "NODE_ENV",
+                    "value": "production"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/carbon-credit-tracker",
+                    "awslogs-region": "us-east-2",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ]
+}
+
